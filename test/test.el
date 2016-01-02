@@ -41,4 +41,32 @@
                (module-test-call-closure fn))
       (should (= n 105)))))
 
+(ert-deftest file-open-close ()
+  "file open and close test"
+  (let ((fd (module-test-open "/dev/zero" :r)))
+    (should (>= fd 0))
+    (module-test-close fd)))
+
+(ert-deftest file-read ()
+  "file read test"
+  (with-temp-file "module-test.txt"
+    (erase-buffer)
+    (insert "hello world"))
+  (let ((fd (module-test-open "module-test.txt" :r)))
+    (let ((str (module-test-read fd (length "hello world"))))
+      (should (string= str "hello world"))
+      (module-test-close fd)))
+  (delete-file "module-test.txt"))
+
+(ert-deftest file-write ()
+  "file write test"
+  (let ((fd (module-test-open "module-test.txt" :rw #o644)))
+    (let ((written (module-test-write fd "hello world")))
+      (should (= written (length "hello world")))
+      (module-test-close fd)
+
+      (with-current-buffer (find-file-noselect "module-test.txt")
+        (should (string= (buffer-string) "hello world")))
+      (delete-file "module-test.txt"))))
+
 ;;; test.el ends here
