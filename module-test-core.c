@@ -49,7 +49,7 @@ Ffile_open(emacs_env *env, ptrdiff_t nargs, emacs_value args[], void *data)
 	if (env->eq(env, args[1], env->intern(env, ":r"))) {
 		flag = O_RDONLY;
 	} else if (env->eq(env, args[1], env->intern(env, ":w"))) {
-		flag = O_WRONLY | O_CREAT;
+		flag = O_WRONLY | O_CREAT | O_TRUNC;
 	} else if (env->eq(env, args[1], env->intern(env, ":rw"))) {
 		flag = O_RDWR | O_CREAT;
 	} else {
